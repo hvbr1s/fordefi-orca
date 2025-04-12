@@ -1,10 +1,7 @@
-import dotenv from 'dotenv'
 import axios from 'axios';
 import { get_tx } from './utils/process_tx'
 
-dotenv.config()
-
-export async function pushToJito(transaction_id: string, accessToken:string, privateKeyPem: string): Promise<void> {
+export async function pushToJito(transaction_id: string, accessToken:string): Promise<void> {
   try {
 
     // 1. Prep variables

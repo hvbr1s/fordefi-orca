@@ -45,7 +45,7 @@ export async function swapWithOrca(fordefiConfig: FordefiSolanaConfig, swapConfi
     const jsonBody = {
         "vault_id": fordefiConfig.vaultId,
         "signer_type": "api_signer",
-        "sign_mode": "auto", // IMPORTANT
+        "sign_mode": "auto",
         "type": "solana_transaction",
         "details": {
             "type": "solana_serialized_transaction_message",
@@ -53,7 +53,7 @@ export async function swapWithOrca(fordefiConfig: FordefiSolanaConfig, swapConfi
             "chain": "solana_mainnet",
             "data": base64EncodedData,
             "signatures":[
-              {data: null},
+              {data: null}, // -> IMPORTANT this is a placeholder for your Fordefi Solana Vault's signature, this must be {data: null}
               {data: secondSignature}
             ]
         },

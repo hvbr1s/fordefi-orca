@@ -33,7 +33,7 @@ export const fordefiConfig: FordefiSolanaConfig = {
 
 export const swapConfig: OrcaSwapConfig = {
   orcaPool: "Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE", // SOL/USDC pool
-  mintAddress: "So11111111111111111111111111111111111111112", // the input token in the swap
+  mintAddress: "So11111111111111111111111111111111111111112", // the input token in the swap, SOL in this case
   swapAmount: 1_000n, // in lamports
   useJito: false, // if true we'll use Jito instead of Fordefi to broadcast the signed transaction
   jitoTip: 1000, // Jito tip amount in lamports (1 SOL = 1e9 lamports)
@@ -70,7 +70,7 @@ async function main(): Promise<void> {
         const transaction_id = data.id
         console.log(`Transaction ID -> ${transaction_id}`)
   
-        await pushToJito(transaction_id, fordefiConfig.accessToken, fordefiConfig.privateKeyPem)
+        await pushToJito(transaction_id, fordefiConfig.accessToken)
   
       } catch (error: any){
         console.error(`Failed to push the transaction to Orca: ${error.message}`)
