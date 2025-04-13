@@ -30,7 +30,7 @@ export const fordefiConfig: FordefiSolanaConfig = {
 };
 
 export const closePositionConfig: OrcaClosePositionConfig = {
-  positionMint: "3VieNsRYFGhA9XK7zSfpDVwuzdk3HWWT7MfX46XDPMtG", // CHANGE to the mint address of the NFT representing your position
+  positionMint: process.env.ORCA_POSITION_MINT_ADDRESS || "", // CHANGE to the mint address of the NFT representing your position
   useJito: false, // if true we'll use Jito instead of Fordefi to broadcast the signed transaction
   jitoTip: 1000, // Jito tip amount in lamports
 };
