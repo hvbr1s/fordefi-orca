@@ -6,7 +6,8 @@
   "scripts": {
     "swap": "ts-node --project tsconfig.json orca_swap.ts",
     "open-position": "ts-node --project tsconfig.json orca_open_position.ts",
-    "harvest-position": "ts-node --project tsconfig.json orca_harvest_position.ts"
+    "harvest-position": "ts-node --project tsconfig.json orca_harvest_position.ts",
+    "close-position": "ts-node --project tsconfig.json orca_close_position.ts"
   },
   "keywords": [],
   "author": "",
