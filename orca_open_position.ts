@@ -1,5 +1,5 @@
 import { signWithApiSigner } from './signer';
-import { swapWithOrca } from './serializers/serialize_swap'
+import { openPositionWithOrca } from './serializers/serialize_open_position'
 import { createAndSignTx } from './utils/process_tx'
 import { pushToJito } from './push_to_jito'
 import dotenv from 'dotenv'
@@ -13,10 +13,9 @@ export interface FordefiSolanaConfig {
   apiPathEndpoint: string;
 };
 
-export interface OrcaSwapConfig {
+export interface OrcaOpenPositionConfig {
   orcaPool: string;
-  mintAddress: string;
-  swapAmount: bigint;
+  tokenAAmount: bigint;
   useJito: boolean;
   jitoTip: number;
 }
@@ -31,12 +30,11 @@ export const fordefiConfig: FordefiSolanaConfig = {
   apiPathEndpoint: '/api/v1/transactions/create-and-wait'
 };
 
-export const swapConfig: OrcaSwapConfig = {
+export const openPositionConfig: OrcaOpenPositionConfig = {
   orcaPool: "Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE", // SOL/USDC pool
-  mintAddress: "So11111111111111111111111111111111111111112", // the input token in the swap, SOL in this case
-  swapAmount: 1_000n, // in lamports
+  tokenAAmount: 10n, // the amount of token A (first token in the pool, in this case SOL) to provide for the position, in lamports (1 SOL = 1e9 lamports)
   useJito: false, // if true we'll use Jito instead of Fordefi to broadcast the signed transaction
-  jitoTip: 1000, // Jito tip amount in lamports (1 SOL = 1e9 lamports)
+  jitoTip: 1000, // Jito tip amount in lamports
 };
 
 
@@ -46,7 +44,7 @@ async function main(): Promise<void> {
     return;
   }
   // We create the tx
-  const jsonBody = await swapWithOrca(fordefiConfig, swapConfig)
+  const jsonBody = await openPositionWithOrca(fordefiConfig, openPositionConfig)
   console.log("JSON request: ", jsonBody)
 
   // Fetch serialized tx from json file
@@ -65,7 +63,7 @@ async function main(): Promise<void> {
     const data = response.data;
     console.log(data)
 
-    if(swapConfig.useJito){
+    if(openPositionConfig.useJito){
       try {
         const transaction_id = data.id
         console.log(`Transaction ID -> ${transaction_id}`)

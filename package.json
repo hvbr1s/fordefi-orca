@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "swap": "ts-node --project tsconfig.json orca_swap.ts"
+    "swap": "ts-node --project tsconfig.json orca_swap.ts",
+    "open-position": "ts-node --project tsconfig.json orca_open_position.ts"
   },
   "keywords": [],
   "author": "",
