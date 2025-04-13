@@ -1,5 +1,5 @@
 import { signWithApiSigner } from './signer';
-import { harvestPositionWithOrca } from './serializers/serialize_harvest_position'
+import { removeLiquidityWithOrca } from './serializers/serialize_remove_liquidity'
 import { createAndSignTx } from './utils/process_tx'
 import { pushToJito } from './push_to_jito'
 import dotenv from 'dotenv'
@@ -13,8 +13,9 @@ export interface FordefiSolanaConfig {
   apiPathEndpoint: string;
 };
 
-export interface OrcaHarvestPositionConfig {
+export interface OrcaRemoveLiquidityConfig {
   positionMint: string;
+  tokenAAmount: bigint;
   useJito: boolean;
   jitoTip: number;
 }
@@ -29,8 +30,9 @@ export const fordefiConfig: FordefiSolanaConfig = {
   apiPathEndpoint: '/api/v1/transactions/create-and-wait'
 };
 
-export const harvestPositionConfig: OrcaHarvestPositionConfig = {
+export const removeLiquidityConfig: OrcaRemoveLiquidityConfig = {
   positionMint: process.env.ORCA_POSITION_MINT_ADDRESS || "", // CHANGE to the mint address of the NFT representing your position
+  tokenAAmount: 10n, // the amount of token A to withdraw from the pool 
   useJito: false, // if true we'll use Jito instead of Fordefi to broadcast the signed transaction
   jitoTip: 1000, // Jito tip amount in lamports
 };
@@ -42,7 +44,7 @@ async function main(): Promise<void> {
     return;
   }
   // We create the tx
-  const jsonBody = await harvestPositionWithOrca(fordefiConfig, harvestPositionConfig)
+  const jsonBody = await removeLiquidityWithOrca(fordefiConfig, removeLiquidityConfig)
   console.log("JSON request: ", jsonBody)
 
   // Fetch serialized tx from json file
@@ -61,7 +63,7 @@ async function main(): Promise<void> {
     const data = response.data;
     console.log(data)
 
-    if(harvestPositionConfig.useJito){
+    if(removeLiquidityConfig.useJito){
       try {
         const transaction_id = data.id
         console.log(`Transaction ID -> ${transaction_id}`)

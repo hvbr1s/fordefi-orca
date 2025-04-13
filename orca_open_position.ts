@@ -32,7 +32,7 @@ export const fordefiConfig: FordefiSolanaConfig = {
 
 export const openPositionConfig: OrcaOpenPositionConfig = {
   orcaPool: "Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE", // SOL/USDC pool
-  tokenAAmount: 10n, // the amount of token A (first token in the pool, in this case SOL) to provide for the position, in lamports (1 SOL = 1e9 lamports)
+  tokenAAmount: 10000n, // the amount of token A (first token in the pool, in this case SOL) to provide for the position, in lamports (1 SOL = 1e9 lamports)
   useJito: false, // if true we'll use Jito instead of Fordefi to broadcast the signed transaction
   jitoTip: 1000, // Jito tip amount in lamports
 };
