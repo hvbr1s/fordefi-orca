@@ -1,26 +1,29 @@
-import { swapInstructions } from '@orca-so/whirlpools';
-import { FordefiSolanaConfig, OrcaSwapConfig} from './orca_swap';
+import { openFullRangePositionInstructions } from '@orca-so/whirlpools';
 import * as kit from '@solana/kit';
+import { FordefiSolanaConfig, OrcaOpenPositionConfig } from '../orca_open_position';
 
 const mainnetRpc = kit.createSolanaRpc('https://api.mainnet-beta.solana.com');
 
-export async function swapWithOrca(fordefiConfig: FordefiSolanaConfig, swapConfig: OrcaSwapConfig){
+export async function openPositionWithOrca(fordefiConfig: FordefiSolanaConfig, swapConfig: OrcaOpenPositionConfig){
 
     const whirlpoolAddress = kit.address(swapConfig.orcaPool)
     const vaultPubKey = kit.address(fordefiConfig.fordefiSolanaVaultAddress)
     const txSigner = kit.createNoopSigner(vaultPubKey)
-    const tokenMint = kit.address(swapConfig.mintAddress);
-    const inputAmount = swapConfig.swapAmount
+    const param = { 
+      tokenA: swapConfig.tokenAAmount 
+    };
 
-    const { instructions, quote } = await swapInstructions(
-        mainnetRpc,
-        { inputAmount, mint: tokenMint },
-        whirlpoolAddress,
-        100,
-        txSigner
-      );
-    console.log('Swap instructions: ', instructions)
-    console.log('Quote: ', quote)
+    const { quote, instructions, initializationCost, positionMint } = await openFullRangePositionInstructions(
+      mainnetRpc,
+      whirlpoolAddress,
+      param,
+      100,
+      txSigner
+    );
+
+    console.log(`Quote token max B: ${quote.tokenMaxB}`);
+    console.log(`Initialization cost: ${initializationCost}`);
+    console.log(`Position mint: ${positionMint}`);
 
     const { value: latestBlockhash } = await mainnetRpc.getLatestBlockhash().send();
 
@@ -38,6 +41,7 @@ export async function swapWithOrca(fordefiConfig: FordefiSolanaConfig, swapConfi
     const signatures = Object.values(signedTx.signatures);
     const secondSignature = signatures[1] ? Buffer.from(signatures[1]).toString('base64') : null;
     console.log("Second signature", secondSignature)
+    const thirdSignature = signatures[2] ? Buffer.from(signatures[2]).toString('base64') : null;
 
     const base64EncodedData = Buffer.from(signedTx.messageBytes).toString('base64');
 
@@ -54,7 +58,8 @@ export async function swapWithOrca(fordefiConfig: FordefiSolanaConfig, swapConfi
             "data": base64EncodedData,
             "signatures":[
               {data: null}, // -> IMPORTANT this is a placeholder for your Fordefi Solana Vault's signature, this must be {data: null}
-              {data: secondSignature}
+              {data: secondSignature},
+              {data: thirdSignature}
             ]
         },
         "wait_for_state": "signed" // only for create-and-wait
